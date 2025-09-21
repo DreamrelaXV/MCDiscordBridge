@@ -23,9 +23,16 @@
 
 ## 📋 Requirements
 
+### 🖥️ **Server**
 - **Java 8+** and **Minecraft 1.8.8** (CarbonSpigot/Paper)
 - **Discord Bot** with slash command permissions
-- **LiteBans** plugin (for ban/unban functionality)
+
+### 🔌 **Required Plugins**
+- **[LiteBans](https://www.spigotmc.org/resources/litebans.3715/)** - For ban/unban functionality *(Essential)*
+
+### 🔌 **Optional Plugins**
+- **[EssentialsX](https://www.spigotmc.org/resources/essentialsx.9089/)** - Enhanced mute/unmute support
+- **[Vault](https://www.spigotmc.org/resources/vault.34315/)** - Permission system integration
 
 ## 🚀 Quick Start
 
@@ -35,7 +42,12 @@
 3. Enable "Server Members Intent"
 4. Invite bot with `bot` + `applications.commands` scopes
 
-### 2. Install Plugin
+### 2. Install Dependencies
+**Download and install these plugins first:**
+- **[LiteBans](https://www.spigotmc.org/resources/litebans.3715/)** - Required for ban/unban commands
+- **[EssentialsX](https://www.spigotmc.org/resources/essentialsx.9089/)** - Optional, for better mute support
+
+### 3. Install MCDiscordBridge
 ```bash
 # Build from source
 mvn clean package
@@ -44,7 +56,7 @@ mvn clean package
 cp target/MCDiscordBridge-1.0.jar /path/to/server/plugins/
 ```
 
-### 3. Configure
+### 4. Configure MCDiscordBridge
 Edit `plugins/MCDiscordBridge/config.yml`:
 ```yaml
 discord:
@@ -64,7 +76,7 @@ discord:
         help: []  # Everyone
 ```
 
-### 4. Start Server
+### 5. Start Server
 Plugin will automatically register Discord slash commands!
 
 ## 🎮 Commands
@@ -103,8 +115,10 @@ Plugin will automatically register Discord slash commands!
 
 - **Bot not responding:** Check token and guild IDs in config
 - **Permission denied:** Verify role IDs and user roles
-- **Ban/unban fails:** Install LiteBans plugin
+- **Ban/unban fails:** Make sure LiteBans is installed and working
+- **Mute/unmute fails:** Install EssentialsX or configure mute commands in config
 - **Names italic in Discord:** Plugin auto-fixes this
+- **Plugin won't load:** Check Java version and server compatibility
 
 ## 🤝 Support
 
