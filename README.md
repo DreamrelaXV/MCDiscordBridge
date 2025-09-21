@@ -120,16 +120,9 @@ Plugin will automatically register Discord slash commands!
 - **Names italic in Discord:** Plugin auto-fixes this
 - **Plugin won't load:** Check Java version and server compatibility
 
-## 🤝 Support
-
-**Developer:** dreamrela  
-**Issues:** [GitHub Issues](https://github.com/dreamrela/MCDiscordBridge/issues)
-
----
-
 <div align="center">
 
-**Made with ❤️ by [Dreamrela](https://github.com/dreamrela)**
+# **Made with ❤️ by [Dreamrela](https://github.com/dreamrela)**
 
 *⭐ Star this repo if you find it helpful!*
 
