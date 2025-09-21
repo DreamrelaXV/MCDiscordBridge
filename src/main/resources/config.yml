@@ -1,5 +1,5 @@
 # MCDiscordBridge Configuration
-# Author: dreamrela
+# Author: Dreamrela
 
 # Discord Bot Configuration
 discord:
@@ -163,4 +163,5 @@ messages:
   
   # Info messages
   online_players: "**Online Players ({count}/{max}):**\n{players}"
+
   no_players_online: "**No players are currently online.**"
