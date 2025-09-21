@@ -1,0 +1,19 @@
+name: MCDiscordBridge
+version: 1.0
+main: com.dreamrela.mcdiscordbridge.MCDiscordBridge
+author: Dreamrela
+description: Discord-Minecraft integration plugin for moderation commands
+api-version: 1.8
+softdepend: [Vault]
+
+commands:
+  mc-dc-reload:
+    description: Reload the MCDiscordBridge plugin
+    usage: /mc-dc-reload
+    permission: mcdiscordbridge.reload
+    permission-message: You don't have permission to use this command.
+
+permissions:
+  mcdiscordbridge.reload:
+    description: Allows reloading the plugin
+    default: op

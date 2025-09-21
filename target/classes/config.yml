@@ -1,0 +1,166 @@
+# MCDiscordBridge Configuration
+# Author: dreamrela
+
+# Discord Bot Configuration
+discord:
+  # Your Discord bot token
+  token: "YOUR_BOT_TOKEN_HERE"
+  
+  # Activity status for the bot
+  activity:
+    type: "WATCHING" # PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
+    text: "Minecraft Server"
+  
+  # Guild configurations (you can add multiple guilds)
+  guilds:
+    # First guild configuration
+    guild1:
+      id: "YOUR_FIRST_GUILD_ID"
+      name: "Main Server"
+      
+      # Role permissions for each command (use role IDs)
+      permissions:
+        ban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
+        unban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
+        mute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
+        unmute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
+        kick: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
+        list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
+        broadcast: ["ADMIN_ROLE_ID"]
+        reload: ["ADMIN_ROLE_ID"]
+        help: [] # Empty means everyone can use it
+    
+    # Second guild configuration
+    guild2:
+      id: "YOUR_SECOND_GUILD_ID"
+      name: "Secondary Server"
+      
+      permissions:
+        ban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        unban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        mute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        unmute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        kick: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        broadcast: ["ADMIN_ROLE_ID_2"]
+        reload: ["ADMIN_ROLE_ID_2"]
+        help: []
+
+# Help command configuration
+help:
+  title: "MCDiscordBridge Commands"
+  description: "Available commands for managing the Minecraft server"
+  color: 0x00FF00 # Hex color code
+  
+  commands:
+    - name: "/mc-ban"
+      description: "Ban a player from the server using LiteBans"
+      usage: "/mc-ban player:username duration:7d reason:Cheating ip-ban:false"
+    
+    - name: "/mc-unban"
+      description: "Unban a player from the server using LiteBans"
+      usage: "/mc-unban player:username reason:Appeal accepted"
+    
+    - name: "/mc-mute"
+      description: "Mute a player on the server"
+      usage: "/mc-mute player:username duration:1h reason:Spamming ip-mute:false"
+    
+    - name: "/mc-unmute"
+      description: "Unmute a player on the server"
+      usage: "/mc-unmute player:username reason:Time served"
+    
+    - name: "/mc-kick"
+      description: "Kick a player from the server"
+      usage: "/mc-kick player:username reason:Breaking rules"
+    
+    - name: "/list"
+      description: "Show online players"
+      usage: "/list"
+    
+    - name: "/brc"
+      description: "Broadcast a message to the server"
+      usage: "/brc text:Welcome to our server!"
+    
+    - name: "/mc-dc-reload"
+      description: "Reload the plugin configuration"
+      usage: "/mc-dc-reload"
+    
+    - name: "/help"
+      description: "Show this help message"
+      usage: "/help"
+
+# Plugin Integration Settings
+plugins:
+  # LiteBans configuration
+  litebans:
+    enabled: true
+    # Command formats for LiteBans
+    ban_command: "litebans:ban {player} {duration} {reason} -s"
+    unban_command: "litebans:unban {player} {reason} -s"
+    tempban_command: "litebans:tempban {player} {duration} {reason} -s"
+    banip_command: "litebans:banip {player} {duration} {reason} -s"
+    unbanip_command: "litebans:unbanip {player} {reason} -s"
+    
+  # Mute plugin configuration (EssentialsX, LiteBans, etc.)
+  mute:
+    enabled: true
+    mute_command: "mute {player} {duration} {reason}"
+    unmute_command: "unmute {player}"
+
+# Embed colors (hex values)
+colors:
+  success: 0x00FF00
+  error: 0xFF0000
+  warning: 0xFFFF00
+  info: 0x0099FF
+  ban: 0xFF0000
+  unban: 0x00FF00
+  mute: 0xFFAA00
+  unmute: 0x00FF00
+  kick: 0xFF6600
+
+# Performance settings
+performance:
+  # Maximum time to wait for Minecraft operations (in milliseconds)
+  timeout: 5000
+  
+  # Enable debug logging
+  debug: false
+  
+  # Thread pool size for async operations
+  thread_pool_size: 4
+
+# Reload settings
+reload:
+  # Message to send before starting reload
+  restart_message: "🔄 **Restart Pushed** - Plugin is reloading, please wait..."
+  
+  # Delay before actually restarting (in milliseconds)
+  restart_delay: 2000
+
+# Message templates
+messages:
+  # Success messages
+  ban_success: "✅ Successfully banned **{player}** for **{duration}** using LiteBans\n**Reason:** {reason}\n**IP Ban:** {ipban}"
+  unban_success: "✅ Successfully unbanned **{player}** using LiteBans\n**Reason:** {reason}"
+  mute_success: "✅ Successfully muted **{player}** for **{duration}**\n**Reason:** {reason}\n**IP Mute:** {ipmute}"
+  unmute_success: "✅ Successfully unmuted **{player}**\n**Reason:** {reason}"
+  kick_success: "✅ Successfully kicked **{player}**\n**Reason:** {reason}"
+  broadcast_success: "✅ Message broadcasted successfully!"
+  reload_success: "✅ Plugin reloaded successfully!"
+  restart_pushed: "🔄 Restart pushed - Plugin is reloading..."
+  
+  # Error messages
+  player_not_found: "❌ Player **{player}** not found!"
+  player_already_banned: "❌ Player **{player}** is already banned!"
+  player_not_banned: "❌ Player **{player}** is not banned!"
+  player_already_muted: "❌ Player **{player}** is already muted!"
+  player_not_muted: "❌ Player **{player}** is not muted!"
+  invalid_duration: "❌ Invalid duration format! Use examples like: 1d, 2h, 30m, 45s"
+  permission_denied: "❌ You don't have permission to use this command!"
+  command_error: "❌ An error occurred while executing the command!"
+  litebans_not_found: "❌ LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
+  
+  # Info messages
+  online_players: "**Online Players ({count}/{max}):**\n{players}"
+  no_players_online: "**No players are currently online.**"
