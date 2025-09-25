@@ -94,12 +94,10 @@ public class UnbanCommand {
     private void executeUnbanSync(SlashCommandInteractionEvent event, OfflinePlayer player, 
                                  String playerName, String reason, String source) {
         try {
-            // Unban both regular and IP bans
-            boolean regularSuccess = PlayerUtils.unbanPlayerWithLiteBans(player, reason, source);
-            boolean ipSuccess = PlayerUtils.unbanPlayerIPWithLiteBans(player, reason, source);
+            // Use the improved unbanall command which unbans all types
+            boolean success = PlayerUtils.unbanPlayerWithLiteBans(player, reason, source);
             
-            // Consider successful if either unban worked
-            if (regularSuccess || ipSuccess) {
+            if (success) {
                 // Create success response
                 event.getHook().editOriginalEmbeds(embedUtils.createPlayerActionEmbed(
                         "Unbanned", playerName, reason, null, true
@@ -107,9 +105,8 @@ public class UnbanCommand {
                 
                 // Log action
                 plugin.getLogger().info(String.format(
-                        "[DISCORD UNBAN - LITEBANS] %s unbanned %s (Regular: %s, IP: %s) - Reason: %s",
-                        event.getUser().getAsTag(), playerName, 
-                        regularSuccess ? "Yes" : "No", ipSuccess ? "Yes" : "No", reason
+                        "[DISCORD UNBAN - LITEBANS] %s unbanned %s (All ban types) - Reason: %s",
+                        event.getUser().getAsTag(), playerName, reason
                 ));
                 
             } else {
