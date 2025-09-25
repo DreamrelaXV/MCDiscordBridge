@@ -78,11 +78,11 @@ public class BanCommand {
                 return;
             }
             
-            // Check duration limits
-            long maxDuration = TimeUnit.DAYS.toMillis(365);
-            if (durationMillis > maxDuration) {
-                editError(event, "Duration Too Long", "Maximum ban duration is 1 year. Please use a shorter duration.");
-                return;
+            // Optional warning for very long bans (but no limit)
+            int warningDays = plugin.getConfigManager().getLongBanWarningDays();
+            if (warningDays > 0 && durationMillis > TimeUnit.DAYS.toMillis(warningDays)) {
+                plugin.getLogger().info("Warning: Very long ban duration (" + PlayerUtils.formatDuration(durationMillis) + 
+                                       ") requested by " + event.getUser().getAsTag());
             }
             
             // Get and validate player
@@ -117,7 +117,6 @@ public class BanCommand {
             
             if (ipBan) {
                 success = PlayerUtils.banPlayerIPWithLiteBans(player, reason, durationMillis, source);
-                PlayerUtils.unbanPlayerIPWithLiteBans(player, "Applying new IP ban", source);
             } else {
                 success = PlayerUtils.banPlayerWithLiteBans(player, reason, durationMillis, source);
             }
