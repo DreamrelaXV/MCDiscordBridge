@@ -1,5 +1,5 @@
 # MCDiscordBridge Configuration
-# Author: Dreamrela
+# Author: dreamrela
 
 # Discord Bot Configuration
 discord:
@@ -28,6 +28,7 @@ discord:
         list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
         broadcast: ["ADMIN_ROLE_ID"]
         reload: ["ADMIN_ROLE_ID"]
+        punishment-list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
         help: [] # Empty means everyone can use it
     
     # Second guild configuration
@@ -44,6 +45,7 @@ discord:
         list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
         broadcast: ["ADMIN_ROLE_ID_2"]
         reload: ["ADMIN_ROLE_ID_2"]
+        punishment-list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
         help: []
 
 # Help command configuration
@@ -81,6 +83,10 @@ help:
       description: "Broadcast a message to the server"
       usage: "/brc text:Welcome to our server!"
     
+    - name: "/punishment-list"
+      description: "View player punishment history"
+      usage: "/punishment-list player:username punishment:bans"
+    
     - name: "/mc-dc-reload"
       description: "Reload the plugin configuration"
       usage: "/mc-dc-reload"
@@ -94,12 +100,14 @@ plugins:
   # LiteBans configuration
   litebans:
     enabled: true
-    # Command formats for LiteBans
-    ban_command: "litebans:ban {player} {duration} {reason} -s"
-    unban_command: "litebans:unban {player} {reason} -s"
-    tempban_command: "litebans:tempban {player} {duration} {reason} -s"
-    banip_command: "litebans:banip {player} {duration} {reason} -s"
-    unbanip_command: "litebans:unbanip {player} {reason} -s"
+    # Command formats for LiteBans (removed -s flag for proper formatting)
+    ban_command: "litebans:ban {player} {duration} {reason}"
+    unban_command: "litebans:unban {player}"
+    tempban_command: "litebans:tempban {player} {duration} {reason}"
+    banip_command: "litebans:banip {player} {duration} {reason}"
+    unbanip_command: "litebans:unbanip {player}"
+    unbanall_command: "litebans:unbanall {player}"
+    history_command: "litebans:history {player}"
     
   # Mute plugin configuration (EssentialsX, LiteBans, etc.)
   mute:
@@ -118,6 +126,7 @@ colors:
   mute: 0xFFAA00
   unmute: 0x00FF00
   kick: 0xFF6600
+  punishment: 0x9932CC
 
 # Performance settings
 performance:
@@ -138,6 +147,14 @@ reload:
   # Delay before actually restarting (in milliseconds)
   restart_delay: 2000
 
+# Ban settings
+ban:
+  # Remove duration limits (set to 0 for unlimited)
+  max_duration_days: 0  # 0 = no limit, previously was 365
+  
+  # Warning message for long bans (optional)
+  long_ban_warning_days: 365  # Warn if ban is longer than 1 year
+
 # Message templates
 messages:
   # Success messages
@@ -149,6 +166,7 @@ messages:
   broadcast_success: "✅ Message broadcasted successfully!"
   reload_success: "✅ Plugin reloaded successfully!"
   restart_pushed: "🔄 Restart pushed - Plugin is reloading..."
+  punishment_list_success: "📋 Punishment history for **{player}**"
   
   # Error messages
   player_not_found: "❌ Player **{player}** not found!"
@@ -160,8 +178,9 @@ messages:
   permission_denied: "❌ You don't have permission to use this command!"
   command_error: "❌ An error occurred while executing the command!"
   litebans_not_found: "❌ LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
+  no_punishments_found: "❌ No punishment history found for **{player}**"
+  punishment_fetch_error: "❌ Failed to fetch punishment history. Please try again later."
   
   # Info messages
   online_players: "**Online Players ({count}/{max}):**\n{players}"
-
   no_players_online: "**No players are currently online.**"
