@@ -35,6 +35,7 @@ public class DiscordBot extends ListenerAdapter {
     private final BroadcastCommand broadcastCommand;
     private final ReloadCommand reloadCommand;
     private final HelpCommand helpCommand;
+    private final PunishmentListCommand punishmentListCommand;
     
     public DiscordBot(MCDiscordBridge plugin) {
         this.plugin = plugin;
@@ -47,6 +48,7 @@ public class DiscordBot extends ListenerAdapter {
         this.broadcastCommand = new BroadcastCommand(plugin);
         this.reloadCommand = new ReloadCommand(plugin);
         this.helpCommand = new HelpCommand(plugin);
+        this.punishmentListCommand = new PunishmentListCommand(plugin);
     }
     
     public void initialize() throws Exception {
@@ -192,12 +194,18 @@ public class DiscordBot extends ListenerAdapter {
                                 .setMaxLength(200)
                 ));
         
-        // List command
-        commands.add(Commands.slash("list", "Show online players"));
-        
-        // Broadcast command
-        commands.add(Commands.slash("brc", "Broadcast a message to the server")
-                .addOption(OptionType.STRING, "text", "Message to broadcast", true));
+        // Punishment list command
+        commands.add(Commands.slash("punishment-list", "View player punishment history")
+                .addOptions(
+                        new OptionData(OptionType.STRING, "player", "Player name or UUID", true)
+                                .setMaxLength(36),
+                        new OptionData(OptionType.STRING, "punishment", "Type of punishment to view", true)
+                                .addChoice("All Punishments", "all")
+                                .addChoice("Bans", "bans")
+                                .addChoice("Mutes", "mutes")
+                                .addChoice("Kicks", "kicks")
+                                .addChoice("Warnings", "warnings")
+                ));
         
         // Reload command
         commands.add(Commands.slash("mc-dc-reload", "Reload the plugin configuration"));
