@@ -11,6 +11,20 @@ discord:
     type: "WATCHING" # PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
     text: "Minecraft Server"
   
+  # Root roles system - Define role aliases for easy management
+  # You can use these aliases throughout the guild permissions instead of role IDs
+  root_roles:
+    owner: "OWNER_ROLE_ID_HERE"
+    admin: "ADMIN_ROLE_ID_HERE"
+    manager: "MANAGER_ROLE_ID_HERE"
+    moderator: "MODERATOR_ROLE_ID_HERE"
+    helper: "HELPER_ROLE_ID_HERE"
+    staff: "STAFF_ROLE_ID_HERE"
+    # Add as many roles as you want:
+    # senior_mod: "SENIOR_MOD_ROLE_ID"
+    # trial_mod: "TRIAL_MOD_ROLE_ID"
+    # vip: "VIP_ROLE_ID"
+  
   # Guild configurations (you can add multiple guilds)
   guilds:
     # First guild configuration
@@ -18,34 +32,44 @@ discord:
       id: "YOUR_FIRST_GUILD_ID"
       name: "Main Server"
       
-      # Role permissions for each command (use role IDs)
+      # Role permissions for each command
+      # You can use either:
+      # - Role aliases from root_roles (e.g., "owner", "admin")  
+      # - Direct role IDs (e.g., "123456789012345678")
+      # - Mix both approaches
       permissions:
-        ban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        unban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        mute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        unmute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        kick: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        broadcast: ["ADMIN_ROLE_ID"]
-        reload: ["ADMIN_ROLE_ID"]
-        punishment-list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
+        ban: ["owner", "admin", "moderator"]
+        unban: ["owner", "admin", "moderator"]
+        mute: ["owner", "admin", "moderator", "helper"]
+        unmute: ["owner", "admin", "moderator", "helper"]
+        kick: ["owner", "admin", "moderator"]
+        list: ["owner", "admin", "moderator", "helper", "staff"]
+        broadcast: ["owner", "admin"]
+        reload: ["owner"]
+        punishment-list: ["owner", "admin", "moderator", "helper"]
         help: [] # Empty means everyone can use it
     
-    # Second guild configuration
+    # Second guild configuration - can have different role mappings
     guild2:
       id: "YOUR_SECOND_GUILD_ID"
       name: "Secondary Server"
       
+      # Override root roles for this specific guild if needed
+      role_overrides:
+        admin: "DIFFERENT_ADMIN_ROLE_ID_FOR_GUILD2"
+        moderator: "DIFFERENT_MOD_ROLE_ID_FOR_GUILD2"
+        # Any roles not overridden will use the root_roles values
+      
       permissions:
-        ban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        unban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        mute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        unmute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        kick: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        broadcast: ["ADMIN_ROLE_ID_2"]
-        reload: ["ADMIN_ROLE_ID_2"]
-        punishment-list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
+        ban: ["owner", "admin"]  # More restrictive for this guild
+        unban: ["owner", "admin"]
+        mute: ["owner", "admin", "moderator"]
+        unmute: ["owner", "admin", "moderator"]
+        kick: ["owner", "admin", "moderator"]
+        list: ["staff"]  # Only staff can view list
+        broadcast: ["owner"]  # Only owner can broadcast
+        reload: ["owner"]
+        punishment-list: ["owner", "admin"]
         help: []
 
 # Help command configuration
@@ -180,6 +204,7 @@ messages:
   litebans_not_found: "❌ LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
   no_punishments_found: "❌ No punishment history found for **{player}**"
   punishment_fetch_error: "❌ Failed to fetch punishment history. Please try again later."
+  role_not_found: "⚠️ Role alias **{role}** not found in configuration!"
   
   # Info messages
   online_players: "**Online Players ({count}/{max}):**\n{players}"
