@@ -422,7 +422,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 *⭐ Star this repo if MCDiscordBridge helps your server!*
 
-[![GitHub stars](https://img.shields.io/github/stars/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/network)
+[![GitHub stars](https://img.shields.io/github/stars/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/stars)
+[![GitHub forks](https://img.shields.io/github/forks/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/fprks)
 
 </div>
