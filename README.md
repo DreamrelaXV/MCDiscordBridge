@@ -418,7 +418,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 <div align="center">
 
-**Made with ❤️ by [dreamrela](https://github.com/dreamrela)**
+# **Made with ❤️ by [Dreamrela](https://github.com/dreamrela)**
 
 *⭐ Star this repo if MCDiscordBridge helps your server!*
 
