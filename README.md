@@ -389,17 +389,11 @@ This will show detailed information about:
 - Describe the feature and its benefits
 - Include example usage scenarios
 
-**🔧 Want to Contribute?**
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
-
 **📞 Need Help?**
 - Check this README thoroughly
 - Search existing GitHub issues
-- Join our Discord community (if available)
-- Contact developer: dreamrela
+- Contact developer: Dreamrela
+- Discord: `@hormaner`
 
 ## 📄 License
 
@@ -407,7 +401,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 ## 🏆 Credits
 
-**Developer:** [dreamrela](https://github.com/dreamrela)  
+**Developer:** [Dreamrela](https://github.com/dreamrela)  
 **Special Thanks:**
 - LiteBans team for the excellent punishment system
 - EssentialsX team for moderation tools
@@ -421,8 +415,5 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 # **Made with ❤️ by [Dreamrela](https://github.com/dreamrela)**
 
 *⭐ Star this repo if MCDiscordBridge helps your server!*
-
-[![GitHub stars](https://img.shields.io/github/stars/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/stars)
-[![GitHub forks](https://img.shields.io/github/forks/dreamrela/MCDiscordBridge?style=social)](https://github.com/dreamrela/MCDiscordBridge/fprks)
 
 </div>
