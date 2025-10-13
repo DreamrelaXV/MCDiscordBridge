@@ -46,7 +46,6 @@ public class MuteCommand {
         String playerInput = getStringOption(event, "player");
         String durationInput = getStringOption(event, "duration");
         String reason = getStringOption(event, "reason");
-        boolean ipMute = getBooleanOption(event, "ip-mute");
         
         // Validate required inputs
         if (!validateInputs(event, playerInput, durationInput, reason)) {
@@ -57,12 +56,12 @@ public class MuteCommand {
         plugin.getAsyncTaskRunner().runAsync(new Runnable() {
             @Override
             public void run() {
-                executeMute(event, playerInput, durationInput, reason, ipMute);
+                executeMute(event, playerInput, durationInput, reason);
             }
         });
     }
     
-    private void executeMute(SlashCommandInteractionEvent event, String playerInput, String durationInput, String reason, boolean ipMute) {
+    private void executeMute(SlashCommandInteractionEvent event, String playerInput, String durationInput, String reason) {
         try {
             // Parse and validate duration
             long durationMillis = PlayerUtils.parseDuration(durationInput);
@@ -94,7 +93,7 @@ public class MuteCommand {
             plugin.getAsyncTaskRunner().runSync(new Runnable() {
                 @Override
                 public void run() {
-                    executeMuteSync(event, player, playerName, fullReason, reason, durationMillis, ipMute, source);
+                    executeMuteSync(event, player, playerName, fullReason, reason, durationMillis, source);
                 }
             });
             
@@ -105,9 +104,9 @@ public class MuteCommand {
     }
     
     private void executeMuteSync(SlashCommandInteractionEvent event, OfflinePlayer player, String playerName, 
-                                String fullReason, String reason, long durationMillis, boolean ipMute, String source) {
+                                String fullReason, String reason, long durationMillis, String source) {
         try {
-            boolean success = mutePlayer(player, fullReason, durationMillis, ipMute);
+            boolean success = mutePlayer(player, fullReason, durationMillis);
             
             if (success) {
                 // Create success response
@@ -117,9 +116,9 @@ public class MuteCommand {
                 
                 // Log action
                 plugin.getLogger().info(String.format(
-                        "[DISCORD MUTE] %s muted %s for %s (IP: %s) - Reason: %s",
+                        "[DISCORD MUTE] %s muted %s for %s - Reason: %s",
                         event.getUser().getAsTag(), playerName, 
-                        PlayerUtils.formatDuration(durationMillis), ipMute, reason
+                        PlayerUtils.formatDuration(durationMillis), reason
                 ));
                 
             } else {
@@ -134,7 +133,7 @@ public class MuteCommand {
         }
     }
     
-    private boolean mutePlayer(OfflinePlayer player, String reason, long durationMillis, boolean ipMute) {
+    private boolean mutePlayer(OfflinePlayer player, String reason, long durationMillis) {
         try {
             String playerName = PlayerUtils.getDisplayName(player);
             String durationString = PlayerUtils.formatDuration(durationMillis);
@@ -146,15 +145,6 @@ public class MuteCommand {
                     .replace("{reason}", reason);
             
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), muteCommand);
-            
-            // Log IP mute if requested
-            if (ipMute) {
-                Player onlinePlayer = player.getPlayer();
-                if (onlinePlayer != null && onlinePlayer.isOnline()) {
-                    String ipAddress = onlinePlayer.getAddress().getAddress().getHostAddress();
-                    plugin.getLogger().info("IP mute requested for " + playerName + " (" + ipAddress + ")");
-                }
-            }
             
             return true;
         } catch (Exception e) {
@@ -185,10 +175,6 @@ public class MuteCommand {
         return option != null ? option.getAsString().trim() : "";
     }
     
-    private boolean getBooleanOption(SlashCommandInteractionEvent event, String name) {
-        OptionMapping option = event.getOption(name);
-        return option != null && option.getAsBoolean();
-    }
     
     private Map<String, String> createPlaceholders(String key, String value) {
         Map<String, String> placeholders = new HashMap<String, String>();

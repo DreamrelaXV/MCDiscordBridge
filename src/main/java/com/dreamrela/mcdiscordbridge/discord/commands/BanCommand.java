@@ -51,7 +51,6 @@ public class BanCommand {
         String playerInput = getStringOption(event, "player");
         String durationInput = getStringOption(event, "duration");
         String reason = getStringOption(event, "reason");
-        boolean ipBan = getBooleanOption(event, "ip-ban");
         
         // Validate required inputs
         if (!validateInputs(event, playerInput, durationInput, reason)) {
@@ -62,12 +61,12 @@ public class BanCommand {
         plugin.getAsyncTaskRunner().runAsync(new Runnable() {
             @Override
             public void run() {
-                executeBan(event, playerInput, durationInput, reason, ipBan);
+                executeBan(event, playerInput, durationInput, reason);
             }
         });
     }
     
-    private void executeBan(SlashCommandInteractionEvent event, String playerInput, String durationInput, String reason, boolean ipBan) {
+    private void executeBan(SlashCommandInteractionEvent event, String playerInput, String durationInput, String reason) {
         try {
             // Parse and validate duration
             long durationMillis = PlayerUtils.parseDuration(durationInput);
@@ -100,7 +99,7 @@ public class BanCommand {
             plugin.getAsyncTaskRunner().runSync(new Runnable() {
                 @Override
                 public void run() {
-                    executeBanSync(event, player, playerName, reason, durationMillis, ipBan, source);
+                    executeBanSync(event, player, playerName, reason, durationMillis, source);
                 }
             });
             
@@ -111,15 +110,9 @@ public class BanCommand {
     }
     
     private void executeBanSync(SlashCommandInteractionEvent event, OfflinePlayer player, String playerName, 
-                               String reason, long durationMillis, boolean ipBan, String source) {
+                               String reason, long durationMillis, String source) {
         try {
-            boolean success;
-            
-            if (ipBan) {
-                success = PlayerUtils.banPlayerIPWithLiteBans(player, reason, durationMillis, source);
-            } else {
-                success = PlayerUtils.banPlayerWithLiteBans(player, reason, durationMillis, source);
-            }
+            boolean success = PlayerUtils.banPlayerWithLiteBans(player, reason, durationMillis, source);
             
             if (success) {
                 // Create success response
@@ -127,7 +120,6 @@ public class BanCommand {
                 placeholders.put("player", playerName);
                 placeholders.put("duration", PlayerUtils.formatDuration(durationMillis));
                 placeholders.put("reason", reason);
-                placeholders.put("ipban", ipBan ? "Yes" : "No");
                 
                 event.getHook().editOriginalEmbeds(embedUtils.createPlayerActionEmbed(
                         "Banned", playerName, reason, PlayerUtils.formatDuration(durationMillis), true
@@ -135,11 +127,7 @@ public class BanCommand {
                 
                 // Log action
                 logAction("BAN - LITEBANS", event.getUser().getAsTag(), playerName, 
-                         PlayerUtils.formatDuration(durationMillis), String.valueOf(ipBan), reason);
-                
-                if (ipBan) {
-                    plugin.getLogger().info("LiteBans IP ban applied for player: " + playerName);
-                }
+                         PlayerUtils.formatDuration(durationMillis), "N/A", reason);
                 
             } else {
                 editError(event, "Ban Failed", "Failed to ban player **" + playerName + "** using LiteBans. Please check server logs for details.");
@@ -174,10 +162,6 @@ public class BanCommand {
         return option != null ? option.getAsString().trim() : "";
     }
     
-    private boolean getBooleanOption(SlashCommandInteractionEvent event, String name) {
-        OptionMapping option = event.getOption(name);
-        return option != null && option.getAsBoolean();
-    }
     
     private Map<String, String> createPlaceholders(String key, String value) {
         Map<String, String> placeholders = new HashMap<String, String>();

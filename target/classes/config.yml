@@ -11,6 +11,20 @@ discord:
     type: "WATCHING" # PLAYING, STREAMING, LISTENING, WATCHING, COMPETING
     text: "Minecraft Server"
   
+  # Root roles system - Define role aliases for easy management
+  # You can use these aliases throughout the guild permissions instead of role IDs
+  root_roles:
+    owner: "OWNER_ROLE_ID_HERE"
+    admin: "ADMIN_ROLE_ID_HERE"
+    manager: "MANAGER_ROLE_ID_HERE"
+    moderator: "MODERATOR_ROLE_ID_HERE"
+    helper: "HELPER_ROLE_ID_HERE"
+    staff: "STAFF_ROLE_ID_HERE"
+    # Add as many roles as you want:
+    # senior_mod: "SENIOR_MOD_ROLE_ID"
+    # trial_mod: "TRIAL_MOD_ROLE_ID"
+    # vip: "VIP_ROLE_ID"
+  
   # Guild configurations (you can add multiple guilds)
   guilds:
     # First guild configuration
@@ -18,32 +32,52 @@ discord:
       id: "YOUR_FIRST_GUILD_ID"
       name: "Main Server"
       
-      # Role permissions for each command (use role IDs)
+      # Role permissions for each command
+      # You can use either:
+      # - Role aliases from root_roles (e.g., "owner", "admin")  
+      # - Direct role IDs (e.g., "123456789012345678")
+      # - Mix both approaches
       permissions:
-        ban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        unban: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        mute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        unmute: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        kick: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID"]
-        list: ["ADMIN_ROLE_ID", "MODERATOR_ROLE_ID", "HELPER_ROLE_ID"]
-        broadcast: ["ADMIN_ROLE_ID"]
-        reload: ["ADMIN_ROLE_ID"]
+        ban: ["owner", "admin", "moderator"]
+        unban: ["owner", "admin", "moderator"]
+        mute: ["owner", "admin", "moderator", "helper"]
+        unmute: ["owner", "admin", "moderator", "helper"]
+        kick: ["owner", "admin", "moderator"]
+        list: ["owner", "admin", "moderator", "helper", "staff"]
+        broadcast: ["owner", "admin"]
+        reload: ["owner"]
+        punishment-list: ["owner", "admin", "moderator", "helper"]
+        rank-add: ["owner", "admin"]
+        rank-remove: ["owner", "admin"]
+        tags-add: ["owner", "admin", "moderator"]
+        tags-remove: ["owner", "admin", "moderator"]
         help: [] # Empty means everyone can use it
     
-    # Second guild configuration
+    # Second guild configuration - can have different role mappings
     guild2:
       id: "YOUR_SECOND_GUILD_ID"
       name: "Secondary Server"
       
+      # Override root roles for this specific guild if needed
+      role_overrides:
+        admin: "DIFFERENT_ADMIN_ROLE_ID_FOR_GUILD2"
+        moderator: "DIFFERENT_MOD_ROLE_ID_FOR_GUILD2"
+        # Any roles not overridden will use the root_roles values
+      
       permissions:
-        ban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        unban: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        mute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        unmute: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        kick: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        list: ["ADMIN_ROLE_ID_2", "MOD_ROLE_ID_2"]
-        broadcast: ["ADMIN_ROLE_ID_2"]
-        reload: ["ADMIN_ROLE_ID_2"]
+        ban: ["owner", "admin"]  # More restrictive for this guild
+        unban: ["owner", "admin"]
+        mute: ["owner", "admin", "moderator"]
+        unmute: ["owner", "admin", "moderator"]
+        kick: ["owner", "admin", "moderator"]
+        list: ["staff"]  # Only staff can view list
+        broadcast: ["owner"]  # Only owner can broadcast
+        reload: ["owner"]
+        punishment-list: ["owner", "admin"]
+        rank-add: ["owner"]
+        rank-remove: ["owner"]
+        tags-add: ["owner", "admin"]
+        tags-remove: ["owner", "admin"]
         help: []
 
 # Help command configuration
@@ -55,7 +89,7 @@ help:
   commands:
     - name: "/mc-ban"
       description: "Ban a player from the server using LiteBans"
-      usage: "/mc-ban player:username duration:7d reason:Cheating ip-ban:false"
+      usage: "/mc-ban player:username duration:7d reason:Cheating"
     
     - name: "/mc-unban"
       description: "Unban a player from the server using LiteBans"
@@ -63,7 +97,23 @@ help:
     
     - name: "/mc-mute"
       description: "Mute a player on the server"
-      usage: "/mc-mute player:username duration:1h reason:Spamming ip-mute:false"
+      usage: "/mc-mute player:username duration:1h reason:Spamming"
+    
+    - name: "/rank add"
+      description: "Add a LuckPerms rank to a player"
+      usage: "/rank add player:username rank:group duration:permanent|7d|12h"
+    
+    - name: "/rank remove"
+      description: "Remove a LuckPerms rank from a player"
+      usage: "/rank remove player:username rank:group"
+    
+    - name: "/tags add"
+      description: "Add a tag to a player (dispatched on server)"
+      usage: "/tags add player:username tag:tagname"
+    
+    - name: "/tags remove"
+      description: "Remove a tag from a player (dispatched on server)"
+      usage: "/tags remove player:username tag:tagname"
     
     - name: "/mc-unmute"
       description: "Unmute a player on the server"
@@ -81,6 +131,10 @@ help:
       description: "Broadcast a message to the server"
       usage: "/brc text:Welcome to our server!"
     
+    - name: "/punishment-list"
+      description: "View player punishment history"
+      usage: "/punishment-list player:username punishment:bans"
+    
     - name: "/mc-dc-reload"
       description: "Reload the plugin configuration"
       usage: "/mc-dc-reload"
@@ -94,18 +148,31 @@ plugins:
   # LiteBans configuration
   litebans:
     enabled: true
-    # Command formats for LiteBans
-    ban_command: "litebans:ban {player} {duration} {reason} -s"
-    unban_command: "litebans:unban {player} {reason} -s"
-    tempban_command: "litebans:tempban {player} {duration} {reason} -s"
-    banip_command: "litebans:banip {player} {duration} {reason} -s"
-    unbanip_command: "litebans:unbanip {player} {reason} -s"
+    # Command formats for LiteBans (removed -s flag for proper formatting)
+    ban_command: "litebans:ban {player} {duration} {reason}"
+    unban_command: "litebans:unban {player}"
+    tempban_command: "litebans:tempban {player} {duration} {reason}"
+    banip_command: "litebans:banip {player} {duration} {reason}"
+    unbanip_command: "litebans:unbanip {player}"
+    unbanall_command: "litebans:unbanall {player}"
+    history_command: "litebans:history {player}"
     
   # Mute plugin configuration (EssentialsX, LiteBans, etc.)
   mute:
     enabled: true
     mute_command: "mute {player} {duration} {reason}"
     unmute_command: "unmute {player}"
+  
+  # LuckPerms command templates
+  luckperms:
+    add_parent_command: "lp user {player} parent add {rank}"
+    addtemp_parent_command: "lp user {player} parent addtemp {rank} {duration}"
+    remove_parent_command: "lp user {player} parent remove {rank}"
+
+  # Tags plugin command templates
+  tags:
+    add_command: "tags add {player} {tag}"
+    remove_command: "tags remove {player} {tag}"
 
 # Embed colors (hex values)
 colors:
@@ -118,6 +185,7 @@ colors:
   mute: 0xFFAA00
   unmute: 0x00FF00
   kick: 0xFF6600
+  punishment: 0x9932CC
 
 # Performance settings
 performance:
@@ -138,6 +206,14 @@ reload:
   # Delay before actually restarting (in milliseconds)
   restart_delay: 2000
 
+# Ban settings
+ban:
+  # Remove duration limits (set to 0 for unlimited)
+  max_duration_days: 0  # 0 = no limit, previously was 365
+  
+  # Warning message for long bans (optional)
+  long_ban_warning_days: 365  # Warn if ban is longer than 1 year
+
 # Message templates
 messages:
   # Success messages
@@ -149,6 +225,7 @@ messages:
   broadcast_success: "✅ Message broadcasted successfully!"
   reload_success: "✅ Plugin reloaded successfully!"
   restart_pushed: "🔄 Restart pushed - Plugin is reloading..."
+  punishment_list_success: "📋 Punishment history for **{player}**"
   
   # Error messages
   player_not_found: "❌ Player **{player}** not found!"
@@ -160,6 +237,9 @@ messages:
   permission_denied: "❌ You don't have permission to use this command!"
   command_error: "❌ An error occurred while executing the command!"
   litebans_not_found: "❌ LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
+  no_punishments_found: "❌ No punishment history found for **{player}**"
+  punishment_fetch_error: "❌ Failed to fetch punishment history. Please try again later."
+  role_not_found: "⚠️ Role alias **{role}** not found in configuration!"
   
   # Info messages
   online_players: "**Online Players ({count}/{max}):**\n{players}"

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
@@ -36,6 +37,8 @@ public class DiscordBot extends ListenerAdapter {
     private final ReloadCommand reloadCommand;
     private final HelpCommand helpCommand;
     private final PunishmentListCommand punishmentListCommand;
+    private final RankCommand rankCommand;
+    private final TagsCommand tagsCommand;
     
     public DiscordBot(MCDiscordBridge plugin) {
         this.plugin = plugin;
@@ -49,6 +52,8 @@ public class DiscordBot extends ListenerAdapter {
         this.reloadCommand = new ReloadCommand(plugin);
         this.helpCommand = new HelpCommand(plugin);
         this.punishmentListCommand = new PunishmentListCommand(plugin);
+        this.rankCommand = new RankCommand(plugin);
+        this.tagsCommand = new TagsCommand(plugin);
     }
     
     public void initialize() throws Exception {
@@ -151,8 +156,7 @@ public class DiscordBot extends ListenerAdapter {
                         new OptionData(OptionType.STRING, "duration", "Ban duration (e.g., 7d, 2h, 30m)", true)
                                 .setMaxLength(20),
                         new OptionData(OptionType.STRING, "reason", "Reason for the ban", true)
-                                .setMaxLength(200),
-                        new OptionData(OptionType.BOOLEAN, "ip-ban", "Whether to IP ban the player", false)
+                                .setMaxLength(200)
                 ));
         
         // Unban command
@@ -172,8 +176,7 @@ public class DiscordBot extends ListenerAdapter {
                         new OptionData(OptionType.STRING, "duration", "Mute duration (e.g., 1h, 30m)", true)
                                 .setMaxLength(20),
                         new OptionData(OptionType.STRING, "reason", "Reason for the mute", true)
-                                .setMaxLength(200),
-                        new OptionData(OptionType.BOOLEAN, "ip-mute", "Whether to IP mute the player", false)
+                                .setMaxLength(200)
                 ));
         
         // Unmute command
@@ -205,6 +208,37 @@ public class DiscordBot extends ListenerAdapter {
                                 .addChoice("Mutes", "mutes")
                                 .addChoice("Kicks", "kicks")
                                 .addChoice("Warnings", "warnings")
+                ));
+        
+        // Rank management (LuckPerms)
+        commands.add(Commands.slash("rank", "Manage LuckPerms ranks")
+                .addSubcommands(
+                        new SubcommandData("add", "Add a rank to a player (permanent or temporary)")
+                                .addOptions(
+                                        new OptionData(OptionType.STRING, "player", "Player name or UUID", true).setMaxLength(36),
+                                        new OptionData(OptionType.STRING, "rank", "LuckPerms group name", true).setMaxLength(64),
+                                        new OptionData(OptionType.STRING, "duration", "'permanent' or duration like 7d/12h", true).setMaxLength(32)
+                                ),
+                        new SubcommandData("remove", "Remove a rank from a player")
+                                .addOptions(
+                                        new OptionData(OptionType.STRING, "player", "Player name or UUID", true).setMaxLength(36),
+                                        new OptionData(OptionType.STRING, "rank", "LuckPerms group name", true).setMaxLength(64)
+                                )
+                ));
+        
+        // Tags management (dispatches to server /tags)
+        commands.add(Commands.slash("tags", "Manage player tags")
+                .addSubcommands(
+                        new SubcommandData("add", "Add a tag to a player")
+                                .addOptions(
+                                        new OptionData(OptionType.STRING, "player", "Player name or UUID", true).setMaxLength(36),
+                                        new OptionData(OptionType.STRING, "tag", "Tag identifier", true).setMaxLength(64)
+                                ),
+                        new SubcommandData("remove", "Remove a tag from a player")
+                                .addOptions(
+                                        new OptionData(OptionType.STRING, "player", "Player name or UUID", true).setMaxLength(36),
+                                        new OptionData(OptionType.STRING, "tag", "Tag identifier", true).setMaxLength(64)
+                                )
                 ));
         
         // Reload command
@@ -249,6 +283,26 @@ public class DiscordBot extends ListenerAdapter {
                     break;
                 case "brc":
                     broadcastCommand.handle(event);
+                    break;
+                case "rank":
+                    String rankSub = event.getSubcommandName();
+                    if ("add".equalsIgnoreCase(rankSub)) {
+                        rankCommand.handleAdd(event);
+                    } else if ("remove".equalsIgnoreCase(rankSub)) {
+                        rankCommand.handleRemove(event);
+                    } else {
+                        event.reply("❌ Unknown subcommand for /rank").setEphemeral(true).queue();
+                    }
+                    break;
+                case "tags":
+                    String tagsSub = event.getSubcommandName();
+                    if ("add".equalsIgnoreCase(tagsSub)) {
+                        tagsCommand.handleAdd(event);
+                    } else if ("remove".equalsIgnoreCase(tagsSub)) {
+                        tagsCommand.handleRemove(event);
+                    } else {
+                        event.reply("❌ Unknown subcommand for /tags").setEphemeral(true).queue();
+                    }
                     break;
                 case "mc-dc-reload":
                     reloadCommand.handle(event);
