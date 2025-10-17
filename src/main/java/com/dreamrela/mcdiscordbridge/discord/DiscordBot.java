@@ -244,6 +244,9 @@ public class DiscordBot extends ListenerAdapter {
         // Reload command
         commands.add(Commands.slash("mc-dc-reload", "Reload the plugin configuration"));
         
+        // List players command
+        commands.add(Commands.slash("list", "Show online players"));
+        
         // Help command
         commands.add(Commands.slash("help", "Show available commands"));
         

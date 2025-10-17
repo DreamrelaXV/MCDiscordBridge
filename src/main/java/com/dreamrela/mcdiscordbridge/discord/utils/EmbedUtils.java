@@ -117,45 +117,94 @@ public class EmbedUtils {
     
     public MessageEmbed createPlayerListEmbed(String playerList, int onlineCount, int maxPlayers) {
         String title = "Online Players (" + onlineCount + "/" + maxPlayers + ")";
-        
+
         if (StringUtils.isBlank(playerList)) {
             return createInfoEmbed(title, "No players are currently online.");
         }
-        
-        // Split long player lists into multiple fields if needed
-        EmbedBuilder builder = new EmbedBuilder()
+
+        // Convert comma-separated list to bullet points in description (avoid fields)
+        String[] players = playerList.split(", ");
+        StringBuilder desc = new StringBuilder("**Players:**\n");
+
+        for (String p : players) {
+            String line = "• " + p + "\n";
+            if (desc.length() + line.length() > MAX_DESCRIPTION_LENGTH) {
+                // Truncate safely if too long for single-embed variant
+                desc.append("…");
+                break;
+            }
+            desc.append(line);
+        }
+
+        return new EmbedBuilder()
                 .setTitle("🎮 " + title)
+                .setDescription(desc.toString())
                 .setColor(new Color(plugin.getConfigManager().getColor("info")))
                 .setTimestamp(Instant.now())
-                .setFooter("MCDiscordBridge by Dreamrela", null);
-        
-        if (playerList.length() <= MAX_FIELD_VALUE_LENGTH) {
-            builder.setDescription("**Players:**\n" + playerList);
-        } else {
-            // Split into multiple fields
-            String[] players = playerList.split(", ");
-            StringBuilder currentField = new StringBuilder();
-            int fieldNum = 1;
-            
-            for (String player : players) {
-                if (currentField.length() + player.length() + 2 > MAX_FIELD_VALUE_LENGTH) {
-                    builder.addField("Players (Part " + fieldNum + ")", currentField.toString(), false);
-                    currentField = new StringBuilder(player);
-                    fieldNum++;
-                } else {
-                    if (currentField.length() > 0) {
-                        currentField.append(", ");
-                    }
-                    currentField.append(player);
-                }
-            }
-            
-            if (currentField.length() > 0) {
-                builder.addField("Players (Part " + fieldNum + ")", currentField.toString(), false);
-            }
+                .setFooter("MCDiscordBridge by Dreamrela", null)
+                .build();
+    }
+
+    public java.util.List<MessageEmbed> createPlayerListEmbeds(java.util.List<String> playerNames, int onlineCount, int maxPlayers) {
+        String baseTitle = "Online Players (" + onlineCount + "/" + maxPlayers + ")";
+
+        if (playerNames == null || playerNames.isEmpty()) {
+            return java.util.Collections.singletonList(createInfoEmbed(baseTitle, "No players are currently online."));
         }
-        
-        return builder.build();
+
+        java.util.List<MessageEmbed> pages = new java.util.ArrayList<MessageEmbed>();
+        java.util.List<String> currentLines = new java.util.ArrayList<String>();
+        int currentLen = "**Players:**\n".length();
+
+        for (String name : playerNames) {
+            String safeName = name == null ? "Unknown" : name;
+            String line = "• " + safeName + "\n";
+            if (currentLen + line.length() > MAX_DESCRIPTION_LENGTH) {
+                // finalize current page
+                EmbedBuilder builder = new EmbedBuilder()
+                        .setTitle("🎮 " + baseTitle)
+                        .setColor(new Color(plugin.getConfigManager().getColor("info")))
+                        .setTimestamp(Instant.now())
+                        .setFooter("MCDiscordBridge by Dreamrela", null);
+                StringBuilder desc = new StringBuilder("**Players:**\n");
+                for (String l : currentLines) desc.append(l);
+                builder.setDescription(desc.toString());
+                pages.add(builder.build());
+
+                // start new page
+                currentLines.clear();
+                currentLen = "**Players:**\n".length();
+            }
+            currentLines.add(line);
+            currentLen += line.length();
+        }
+
+        if (!currentLines.isEmpty()) {
+            EmbedBuilder builder = new EmbedBuilder()
+                    .setTitle("🎮 " + baseTitle)
+                    .setColor(new Color(plugin.getConfigManager().getColor("info")))
+                    .setTimestamp(Instant.now())
+                    .setFooter("MCDiscordBridge by Dreamrela", null);
+            StringBuilder desc = new StringBuilder("**Players:**\n");
+            for (String l : currentLines) desc.append(l);
+            builder.setDescription(desc.toString());
+            pages.add(builder.build());
+        }
+
+        // If more than one page, annotate titles with page numbers
+        if (pages.size() > 1) {
+            java.util.List<MessageEmbed> numbered = new java.util.ArrayList<MessageEmbed>(pages.size());
+            int total = pages.size();
+            for (int i = 0; i < total; i++) {
+                MessageEmbed e = pages.get(i);
+                EmbedBuilder b = new EmbedBuilder(e);
+                b.setTitle("🎮 " + baseTitle + " — Page " + (i + 1) + "/" + total);
+                numbered.add(b.build());
+            }
+            return numbered;
+        }
+
+        return pages;
     }
     
     private String sanitizeText(String text, int maxLength) {

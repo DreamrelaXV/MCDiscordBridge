@@ -49,17 +49,31 @@ public class ListCommand {
             int onlineCount = Bukkit.getOnlinePlayers().size();
             int maxPlayers = Bukkit.getMaxPlayers();
             
-            String playerNames = onlineCount == 0 ? "" : PlayerUtils.formatPlayerListForDiscord(Bukkit.getOnlinePlayers());
-            
-            // Create and send player list embed
-            event.getHook().editOriginalEmbeds(embedUtils.createPlayerListEmbed(
-                    playerNames, onlineCount, maxPlayers
-            )).queue();
+            if (onlineCount == 0) {
+                event.getHook().editOriginalEmbeds(embedUtils.createPlayerListEmbed("", onlineCount, maxPlayers)).queue();
+                return;
+            }
+
+            java.util.List<String> names = new java.util.ArrayList<String>();
+            for (org.bukkit.entity.Player p : Bukkit.getOnlinePlayers()) {
+                names.add(PlayerUtils.getDisplayNameForDiscord(Bukkit.getOfflinePlayer(p.getUniqueId())));
+            }
+
+            java.util.List<net.dv8tion.jda.api.entities.MessageEmbed> pages = embedUtils.createPlayerListEmbeds(names, onlineCount, maxPlayers);
+
+            // Send first page by editing original reply
+            event.getHook().editOriginalEmbeds(pages.get(0)).queue();
+
+            // Send remaining pages as followups to avoid field limits and description overflows
+            for (int i = 1; i < pages.size(); i++) {
+                event.getHook().sendMessageEmbeds(pages.get(i)).queue();
+            }
             
             // Log action
             if (plugin.getConfigManager().isDebugEnabled()) {
-                plugin.getLogger().info(String.format("[DISCORD LIST] %s requested player list (%d/%d online)",
-                                                     event.getUser().getAsTag(), onlineCount, maxPlayers));
+                plugin.getLogger().info(String.format("[DISCORD LIST] %s requested player list (%d/%d online)%s",
+                                                     event.getUser().getAsTag(), onlineCount, maxPlayers,
+                                                     pages.size() > 1 ? " - " + pages.size() + " pages" : ""));
             }
             
         } catch (Exception e) {
