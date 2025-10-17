@@ -201,7 +201,7 @@ performance:
 # Reload settings
 reload:
   # Message to send before starting reload
-  restart_message: "🔄 **Restart Pushed** - Plugin is reloading, please wait..."
+  restart_message: "[RESTART] Plugin is reloading, please wait..."
   
   # Delay before actually restarting (in milliseconds)
   restart_delay: 2000
@@ -217,29 +217,29 @@ ban:
 # Message templates
 messages:
   # Success messages
-  ban_success: "✅ Successfully banned **{player}** for **{duration}** using LiteBans\n**Reason:** {reason}\n**IP Ban:** {ipban}"
-  unban_success: "✅ Successfully unbanned **{player}** using LiteBans\n**Reason:** {reason}"
-  mute_success: "✅ Successfully muted **{player}** for **{duration}**\n**Reason:** {reason}\n**IP Mute:** {ipmute}"
-  unmute_success: "✅ Successfully unmuted **{player}**\n**Reason:** {reason}"
-  kick_success: "✅ Successfully kicked **{player}**\n**Reason:** {reason}"
-  broadcast_success: "✅ Message broadcasted successfully!"
-  reload_success: "✅ Plugin reloaded successfully!"
-  restart_pushed: "🔄 Restart pushed - Plugin is reloading..."
-  punishment_list_success: "📋 Punishment history for **{player}**"
+  ban_success: "[SUCCESS] Successfully banned **{player}** for **{duration}** using LiteBans\n**Reason:** {reason}\n**IP Ban:** {ipban}"
+  unban_success: "[SUCCESS] Successfully unbanned **{player}** using LiteBans\n**Reason:** {reason}"
+  mute_success: "[SUCCESS] Successfully muted **{player}** for **{duration}**\n**Reason:** {reason}\n**IP Mute:** {ipmute}"
+  unmute_success: "[SUCCESS] Successfully unmuted **{player}**\n**Reason:** {reason}"
+  kick_success: "[SUCCESS] Successfully kicked **{player}**\n**Reason:** {reason}"
+  broadcast_success: "[SUCCESS] Message broadcasted successfully!"
+  reload_success: "[SUCCESS] Plugin reloaded successfully!"
+  restart_pushed: "[RESTART] Restart pushed - Plugin is reloading..."
+  punishment_list_success: "[INFO] Punishment history for **{player}**"
   
   # Error messages
-  player_not_found: "❌ Player **{player}** not found!"
-  player_already_banned: "❌ Player **{player}** is already banned!"
-  player_not_banned: "❌ Player **{player}** is not banned!"
-  player_already_muted: "❌ Player **{player}** is already muted!"
-  player_not_muted: "❌ Player **{player}** is not muted!"
-  invalid_duration: "❌ Invalid duration format! Use examples like: 1d, 2h, 30m, 45s"
-  permission_denied: "❌ You don't have permission to use this command!"
-  command_error: "❌ An error occurred while executing the command!"
-  litebans_not_found: "❌ LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
-  no_punishments_found: "❌ No punishment history found for **{player}**"
-  punishment_fetch_error: "❌ Failed to fetch punishment history. Please try again later."
-  role_not_found: "⚠️ Role alias **{role}** not found in configuration!"
+  player_not_found: "[ERROR] Player **{player}** not found!"
+  player_already_banned: "[ERROR] Player **{player}** is already banned!"
+  player_not_banned: "[ERROR] Player **{player}** is not banned!"
+  player_already_muted: "[ERROR] Player **{player}** is already muted!"
+  player_not_muted: "[ERROR] Player **{player}** is not muted!"
+  invalid_duration: "[ERROR] Invalid duration format! Use examples like: 1d, 2h, 30m, 45s"
+  permission_denied: "[ERROR] You don't have permission to use this command!"
+  command_error: "[ERROR] An error occurred while executing the command!"
+  litebans_not_found: "[ERROR] LiteBans plugin not found! Please install LiteBans for ban/unban functionality."
+  no_punishments_found: "[ERROR] No punishment history found for **{player}**"
+  punishment_fetch_error: "[ERROR] Failed to fetch punishment history. Please try again later."
+  role_not_found: "[WARNING] Role alias **{role}** not found in configuration!"
   
   # Info messages
   online_players: "**Online Players ({count}/{max}):**\n{players}"
